@@ -3,19 +3,19 @@ const { MessageEmbed } = require("discord.js");
 module.exports = {
     name: "playlist",
     cooldown: 2,
-    description: "Menampilkan antrian.",
+    description: "Show the playlist",
     async execute(message) {
-        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
+        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "bot-command");
 
         if (message.channel != botCommandChannel) {
-            message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+            message.channel.send(`Can only use bot command on ${botCommandChannel} channel!`);
         } else {
             const permissions = message.channel.permissionsFor(message.client.user);
             if (!permissions.has(["MANAGE_MESSAGE", "ADD_REACTIONS"]))
-                return message.reply("Tidak memiliki izin `MANAGE_MESSAGE` dan `ADD_REACTION`");
+                return message.reply("You don't have `MANAGE_MESSAGE` and `ADD_REACTION` permission");
 
             const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return message.channel.send("Tidak ada lagu yang sedang dimainkan");
+            if (!queue) return message.channel.send("There is no song in queue!");
 
             let currentPage = 0;
             const embeds = generateQueueEmbed(message, queue.songs);
@@ -42,12 +42,12 @@ module.exports = {
                     if (reaction.emoji.name === "➡️") {
                         if (currentPage < embeds.length - 1) {
                             currentPage++;
-                            queueEmbed.edit(`**Halaman - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
+                            queueEmbed.edit(`**Page - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
                         }
                     } else if (reaction.emoji.name === "⬅️") {
                         if (currentPage !== 0) {
                             --currentPage;
-                            queueEmbed.edit(`**Halaman - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
+                            queueEmbed.edit(`**Page - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
                         }
                     } else {
                         collector.stop();
@@ -76,11 +76,10 @@ function generateQueueEmbed(message, queue) {
         const info = current.map((track) => `${++j} - [${track.title}](${track.url})`).join("\n");
 
         const embed = new MessageEmbed()
-            .setTitle("Dalam antrian\n")
+            .setTitle("In queue\n")
             .setThumbnail(message.guild.iconURL())
             .setColor("#F8AA2A")
-            .setDescription(`**Sedang dimainkan - [${queue[0].title}](${queue[0].url})**\n\n${info}`)
-            .setFooter('Hikawa Sayo | Made by : CotoMKS27#9361');
+            .setDescription(`**Now Playing - [${queue[0].title}](${queue[0].url})**\n\n${info}`);
         embeds.push(embed);
     }
 

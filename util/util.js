@@ -3,7 +3,7 @@ exports.canModifyQueue = (member) => {
     const botChannel = member.guild.voice.channelID;
 
     if (channelID !== botChannel) {
-        member.send("Harus berada di Voice Channel untuk melakukan command").catch(console.error);
+        message.channel.send("Must connected to a Voice Channel!").catch(console.error);
         return;
     }
 

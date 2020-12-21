@@ -21,9 +21,8 @@ module.exports = {
             setTimeout(function() {
                 if (queue.connection.dispatcher && message.guild.me.voice.channel) return;
                 queue.channel.leave();
-                queue.textChannel.send("Keluar dari Voice Channel....");
+                queue.textChannel.send("Disconnecting from Voice Channel....");
             }, STAY_TIME * 1000);
-            queue.textChannel.send("Antrian dihentikan....").catch(console.error);
             return message.client.queue.delete(message.guild.id);
         }
 
@@ -68,11 +67,9 @@ module.exports = {
         dispatcher.setVolumeLogarithmic(queue.volume / 100);
 
         try {
-            var playingMessage = await queue.textChannel.send(`Sedang diputar : **${song.title}** ${song.url}`);
+            var playingMessage = await queue.textChannel.send(`Now Playing : **${song.title}** ${song.url}`);
             await playingMessage.react("⏭");
             await playingMessage.react("⏯");
-            await playingMessage.react("🔉");
-            await playingMessage.react("🔊");
             await playingMessage.react("🔁");
             await playingMessage.react("⏹");
         } catch (error) {
@@ -94,7 +91,7 @@ module.exports = {
                     reaction.users.remove(user).catch(console.error);
                     if (!canModifyQueue(member)) return;
                     queue.connection.dispatcher.end();
-                    queue.textChannel.send(`⏭ Lagu di Skip oleh : ${message.author}`).catch(console.error);
+                    queue.textChannel.send("Skip to next song").catch(console.error);
                     collector.stop();
                     break;
 
@@ -104,48 +101,26 @@ module.exports = {
                     if (queue.playing) {
                         queue.playing = !queue.playing;
                         queue.connection.dispatcher.pause(true);
-                        queue.textChannel.send(`⏸ Lagu di Pause oleh : ${message.author}`).catch(console.error);
+                        queue.textChannel.send("Pause....").catch(console.error);
                     } else {
                         queue.playing = !queue.playing;
                         queue.connection.dispatcher.resume();
-                        queue.textChannel.send(`▶ Lagu di Resume oleh ${message.author}`).catch(console.error);
+                        queue.textChannel.send("Resume....").catch(console.error);
                     }
-                    break;
-
-                case "🔉":
-                    reaction.users.remove(user).catch(console.error);
-                    if (!canModifyQueue(member) || queue.volume == 0) return;
-                    if (queue.volume - 10 <= 0) queue.volume = 0;
-                    else queue.volume = queue.volume - 10;
-                    queue.connection.dispatcher.setVolumeLogarithmic(queue.volume / 100);
-                    queue.textChannel
-                        .send(`🔉 Volume saat ini : **${queue.volume}%**`)
-                        .catch(console.error);
-                    break;
-
-                case "🔊":
-                    reaction.users.remove(user).catch(console.error);
-                    if (!canModifyQueue(member) || queue.volume == 100) return;
-                    if (queue.volume + 10 >= 100) queue.volume = 100;
-                    else queue.volume = queue.volume + 10;
-                    queue.connection.dispatcher.setVolumeLogarithmic(queue.volume / 100);
-                    queue.textChannel
-                        .send(`🔊 Volume saat ini : **${queue.volume}%**`)
-                        .catch(console.error);
                     break;
 
                 case "🔁":
                     reaction.users.remove(user).catch(console.error);
                     if (!canModifyQueue(member)) return;
                     queue.loop = !queue.loop;
-                    queue.textChannel.send(`Mengulangi Antrian : ${queue.loop ? "**on**" : "**off**"}`).catch(console.error);
+                    queue.textChannel.send(`Loop : ${queue.loop ? "**on**" : "**off**"}`).catch(console.error);
                     break;
 
                 case "⏹":
                     reaction.users.remove(user).catch(console.error);
                     if (!canModifyQueue(member)) return;
                     queue.songs = [];
-                    queue.textChannel.send(`⏹ Antrian di Hentikan Oleh : ${message.author}`).catch(console.error);
+                    queue.textChannel.send("Queue Stop....").catch(console.error);
                     try {
                         queue.connection.dispatcher.end();
                     } catch (error) {

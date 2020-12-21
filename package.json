@@ -1,9 +1,9 @@
 {
-    "name": "hikawa-sayo",
-    "version": "1.5.0",
-    "description": " My beloved discord wife",
+    "name": "YOUR-APP-NAME",
+    "version": "1.0.0",
+    "description": "",
     "main": "index.js",
-    "author": "CotoMKS27",
+    "author": "",
     "private": true,
     "engines": {
         "node": ">=12.0.0"

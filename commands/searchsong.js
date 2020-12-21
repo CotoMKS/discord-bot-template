@@ -6,27 +6,27 @@ const youtube = new YouTubeAPI(YOUTUBE_API_KEY);
 module.exports = {
     name: "searchsong",
     aliases: ["ss"],
-    description: "Mencari lagu di Youtube dan memutarnya di Voice Channel yang kamu tempati saat ini",
+    description: "Search song on youtube",
     async execute(message, args) {
-        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
+        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "bot-command");
 
         if (message.channel != botCommandChannel) {
-            message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+            message.channel.send(`Can only use bot command on ${botCommandChannel} channel!`);
         } else {
             if (!args.length)
                 return message
-                    .reply(`Cara pakai : ${message.client.prefix}${module.exports.name} <Nama video atau lagu yang ingin anda putar>`)
+                    .reply(`How to use : ${prefix}searchsong <song name>`)
                     .catch(console.error);
             if (message.channel.activeCollector)
-                return message.reply("Aku cuman butuh jawabanmu....");
+                return message.reply("Please insert the number of the song you want to add to playlist!");
             if (!message.member.voice.channel)
-                return message.reply("Harus berada di dalam Voice Channel").catch(console.error);
+                return message.reply("You must connected to voice channel!").catch(console.error);
 
             const search = args.join(" ");
 
             let resultsEmbed = new MessageEmbed()
-                .setTitle(`**Balas dengan angka 1 sampai 5**`)
-                .setDescription(`Hasil Dari: ${search}`)
+                .setTitle(`**Reply with number 1 to 5**`)
+                .setDescription(`Result of: ${search}`)
                 .setColor("#32aabe");
 
             try {

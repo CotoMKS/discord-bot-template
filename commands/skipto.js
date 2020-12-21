@@ -2,23 +2,23 @@ const { canModifyQueue } = require("../util/util");
 
 module.exports = {
     name: "skipto",
-    description: "Skip ke urutan yang ditentukan",
+    description: "Skip to selected song",
     execute(message, args) {
-        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
+        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "bot-command");
 
         if (message.channel != botCommandChannel) {
-            message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+            message.channel.send(`Can only use bot command on ${botCommandChannel} channel!`);
         } else {
             if (!args.length || isNaN(args[0]))
                 return message
-                    .reply(`Cara Pakai : ${message.client.prefix}${module.exports.name} <Nomor Antrian>`)
+                    .reply(`How to use : ${message.client.prefix}${module.exports.name} <queue number>`)
                     .catch(console.error);
 
             const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return message.channel.send("Tidak ada lagu yang sedang dimainkan").catch(console.error);
+            if (!queue) return message.channel.send("There is no song in queue!").catch(console.error);
             if (!canModifyQueue(message.member)) return;
             if (args[0] > queue.songs.length)
-                return message.reply(`Antrian cuma berisi ${queue.songs.length} lagu`).catch(console.error);
+                return message.reply(`Queue only have ${queue.songs.length} song(s)`).catch(console.error);
 
             queue.playing = true;
 
@@ -31,7 +31,7 @@ module.exports = {
             }
 
             queue.connection.dispatcher.end();
-            queue.textChannel.send(`Skip ke antrian nomor ${args[0]}....`).catch(console.error);
+            queue.textChannel.send(`Skip to queue number ${args[0]}....`).catch(console.error);
         }
     }
 }

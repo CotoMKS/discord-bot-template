@@ -3,53 +3,52 @@ const { PREFIX } = require("../util/util");
 
 module.exports = {
     name: 'ban',
-    description: 'Banned member',
+    description: 'Ban member',
     async execute(message, client) {
-        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
+        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "bot-command");
 
         if (message.channel != botCommandChannel) {
-            message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+            message.channel.send(`Can only use bot command on ${botCommandChannel} channel!`);
         } else {
 
             let args = message.content.substring(PREFIX.length).split(" ");
             let banned = message.mentions.users.first();
-            let reason = args.slice(1).join(" ");
+            let reason = args.slice(2).join(" ");
 
             if (!message.member.permissions.has("ADMINISTRATOR")) {
-                message.channel.send("Anda tidak memiliki izin `ADMINISTRATOR`");
+                message.channel.send("You don't have `ADMINISTRATOR` Permission");
 
                 return;
             }
 
             if (!message.guild.me.permissions.has("ADMINISTRATOR")) {
-                message.channel.send("Saya tidak memiliki izin `ADMINISTRATOR`");
+                message.channel.send("I don't have `ADMINISTRATOR` Permission");
 
                 return;
             }
 
             if (!banned) {
-                message.reply("Siapa yang ingin anda Ban?");
+                message.reply(`How to use : ${PREFIX}ban <member name> <reason>`);
 
                 return;
             }
 
             if (message.author === banned) {
-                message.reply("Tidak dapat melakukan Ban ke diri sendiri....");
+                message.reply("Can't ban yourself!");
                 return;
             }
 
             if (!reason) {
-                message.reply("Mengapa anda melakukan Ban pada user ini");
+                message.reply(`How to use : ${PREFIX}ban <member name> <reason>`);
                 return;
             }
 
             message.guild.members.ban(banned, { reason: reason });
 
             let successfullyembed = new Discord.MessageEmbed()
-                .setTitle(`${banned.tag} telah di Ban dari server ini`)
+                .setTitle(`${banned.tag} has been *Banned* from this Server`)
                 .setColor("#32aabe")
-                .setDescription(`Karena : ${reason}`)
-                .setFooter('Hikawa Sayo | Made by : CotoMKS27#9361')
+                .setDescription(`Reason : ${reason}`)
                 .setTimestamp();
 
             message.channel.send(successfullyembed);

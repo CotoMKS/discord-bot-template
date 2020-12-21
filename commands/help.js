@@ -2,17 +2,17 @@ const { MessageEmbed } = require("discord.js");
 
 module.exports = {
   name: "help",
-  description: "Menammpilkan seluruh perintah yang tersedia",
+  description: "Show all available commands",
   execute(message) {
-    const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
+    const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "bot-command");
 
     if (message.channel != botCommandChannel) {
-      message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+      message.channel.send(`Can only use bot command on ${botCommandChannel} channel!`);
     } else {
       let commands = message.client.commands.array();
 
       let helpEmbed = new MessageEmbed()
-        .setTitle("Perintah yang tersedia : ")
+        .setTitle("Available Commands : ")
         .setColor("#32aabe");
 
       commands.forEach((cmd) => {
@@ -22,9 +22,6 @@ module.exports = {
           true
         );
       });
-    
-      helpEmbed.setFooter('Hikawa Sayo | Made by : CotoMKS27#9361');
-
       return message.channel.send(helpEmbed).catch(console.error);
     }
   }

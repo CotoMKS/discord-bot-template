@@ -3,7 +3,6 @@ const Discord = require("discord.js");
 const { readdirSync } = require("fs");
 const { join } = require("path");
 const { TOKEN, PREFIX } = require("./util/util");
-const memberCounter = require("./counters/total-member");
 
 const client = new Client({ disableMentions: "everyone" });
 
@@ -15,40 +14,22 @@ const cooldowns = new Collection();
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 client.on("ready", () => {
-    console.log(`Hai, Sayang :)\n${client.user.tag} telah Aktif!`);
-    const activities_list = [
-        "with CotoMKS27#9361",
-        "with Hina-chan",
-        "Guitar",
-        "BanG Dream! Girls Band Party",
-        "with Roselia members",
-        "with This Server's members",
-        "Visual Studio Code",
-        "Neo Fantasy Online",
-        "ROBLOX",
-        "Sound Volblox 3 on ROBLOX"
-    ];
-
-    setInterval(() => {
-        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
-        client.user.setActivity(`${activities_list[index]}`, { type: 'PLAYING' });
-    }, 5000);
-    memberCounter(client);
+    console.log(`${client.user.tag} is Online!`);
+    client.user.setActivity("Visual Studio Code", { type: 'PLAYING' });
 });
 
 client.on("guildMemberAdd", async member => {
-    const channel = member.guild.channels.cache.find(channel => channel.name === "🚀landing-page🚀");
-    let orangRole = member.guild.roles.cache.find(role => role.name === "Orang");
+    const channel = member.guild.channels.cache.find(channel => channel.name === "YOUR-WELCOME-CHANNEL"); //Change it to your actual welcome channel
+    let memberRole = member.guild.roles.cache.find(role => role.name === "Member"); //Default role
     var embedWelcome = new Discord.MessageEmbed()
         .setColor("#32aabe")
-        .setTitle(`**${ member.user.tag }** Telah bergabung!`)
+        .setTitle(`**${ member.user.tag }** has join the server!`)
         .setThumbnail(member.user.displayAvatarURL({ format: 'png', dynamic: true }))
-        .setDescription(`いらっしゃい\n**${ member.guild.name }** にようこそ`)
-        .setFooter('Hikawa Sayo | Made by : CotoMKS27#9361')
+        .setDescription(`Welcome to **${ member.guild.name }**`)
         .setTimestamp();
 
     channel.send(embedWelcome);
-    member.roles.add(orangRole).catch(console.error);
+    member.roles.add(memberRole).catch(console.error);
 });
 
 client.on("warn", (info) => console.log(info));
@@ -67,7 +48,7 @@ client.on("message", async(message) => {
     const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(PREFIX)})\\s*`);
     if (!prefixRegex.test(message.content)) return;
 
-    const [, matchedPrefix] = message.content.match(prefixRegex);
+    const [matchedPrefix] = message.content.match(prefixRegex);
 
     const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
     const commandName = args.shift().toLowerCase();
@@ -92,7 +73,7 @@ client.on("message", async(message) => {
         if (now < expirationTime) {
             const timeLeft = (expirationTime - now) / 1000;
             return message.reply(
-                `Mohon tunggu ${timeLeft.toFixed(1)} detik sebelum menggunakan perintah \`${command.name}\` lagi.`
+                `Please wait ${timeLeft.toFixed(1)} second(s) to use \`${command.name}\` again.`
             );
         }
     }
@@ -104,6 +85,6 @@ client.on("message", async(message) => {
         command.execute(message, args);
     } catch (error) {
         console.error(error);
-        message.reply(`Terjadi Kesalahan Saat Menjalankan Perintah\nAlasan : ${error}`).catch(console.error);
+        message.reply(`Error while executing the command\Reason : ${error}`).catch(console.error);
     }
 });
