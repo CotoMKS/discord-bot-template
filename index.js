@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 const { readdirSync } = require("fs");
 const { join } = require("path");
 const { TOKEN, PREFIX } = require("./util/util");
-const memberCounter = require("./counters/member-counter");
+const memberCounter = require("./counters/total-member");
 
 const client = new Client({ disableMentions: "everyone" });
 

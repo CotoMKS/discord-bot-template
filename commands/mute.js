@@ -6,35 +6,41 @@ module.exports = {
     name: 'mute',
     description: 'Mute user yang di mention',
     async execute(message, args) {
-        const target = message.mentions.users.first();
+        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
 
-        if (!message.member.permissions.has("MANAGE_ROLES")) return message.channel.send("Anda tidak memiliki izin `MANAGE_ROLES`");
+        if (message.channel != botCommandChannel) {
+            message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+        } else {
+            const target = message.mentions.users.first();
 
-        if (target) {
-            let orangRole = message.guild.roles.cache.find(role => role.name === 'Orang');
-            let muteRole = message.guild.roles.cache.find(role => role.name === 'Diam!');
+            if (!message.member.permissions.has("MANAGE_ROLES")) return message.channel.send("Anda tidak memiliki izin `MANAGE_ROLES`");
 
-            let memberTarget = message.guild.members.cache.get(target.id);
+            if (target) {
+                let orangRole = message.guild.roles.cache.find(role => role.name === 'Orang');
+                let muteRole = message.guild.roles.cache.find(role => role.name === 'Diam!');
 
-            if (!args[1]) {
+                let memberTarget = message.guild.members.cache.get(target.id);
+
+                if (!args[1]) {
+                    memberTarget.roles.remove(orangRole.id);
+                    memberTarget.roles.add(muteRole.id);
+                    message.channel.send(`<@${memberTarget.user.id}> telah di Mute!`);
+
+                    return
+                }
+
                 memberTarget.roles.remove(orangRole.id);
                 memberTarget.roles.add(muteRole.id);
-                message.channel.send(`<@${memberTarget.user.id}> telah di Mute!`);
+                message.channel.send(`<@${memberTarget.user.id}> telah di Mute selama ${ms(ms(args[1]))}`);
 
-                return
+                setTimeout(function() {
+                    memberTarget.roles.remove(muteRole.id);
+                    memberTarget.roles.add(orangRole.id);
+                }, ms(args[1]));
+
+            } else {
+                message.channel.send('Tidak dapat menemukan user tersebut!');
             }
-
-            memberTarget.roles.remove(orangRole.id);
-            memberTarget.roles.add(muteRole.id);
-            message.channel.send(`<@${memberTarget.user.id}> telah di Mute selama ${ms(ms(args[1]))}`);
-
-            setTimeout(function() {
-                memberTarget.roles.remove(muteRole.id);
-                memberTarget.roles.add(orangRole.id);
-            }, ms(args[1]));
-
-        } else {
-            message.channel.send('Tidak dapat menemukan user tersebut!');
         }
     }
 }

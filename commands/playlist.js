@@ -5,56 +5,62 @@ module.exports = {
     cooldown: 2,
     description: "Menampilkan antrian.",
     async execute(message) {
-        const permissions = message.channel.permissionsFor(message.client.user);
-        if (!permissions.has(["MANAGE_MESSAGE", "ADD_REACTIONS"]))
-            return message.reply("Tidak memiliki izin `MANAGE_MESSAGE` dan `ADD_REACTION`");
+        const botCommandChannel = message.guild.channels.cache.find(channel => channel.name === "🤖bot-command🤖");
 
-        const queue = message.client.queue.get(message.guild.id);
-        if (!queue) return message.channel.send("Tidak ada lagu yang sedang dimainkan");
+        if (message.channel != botCommandChannel) {
+            message.channel.send(`Bot Command hanya bisa digunakan di ${botCommandChannel}`);
+        } else {
+            const permissions = message.channel.permissionsFor(message.client.user);
+            if (!permissions.has(["MANAGE_MESSAGE", "ADD_REACTIONS"]))
+                return message.reply("Tidak memiliki izin `MANAGE_MESSAGE` dan `ADD_REACTION`");
 
-        let currentPage = 0;
-        const embeds = generateQueueEmbed(message, queue.songs);
+            const queue = message.client.queue.get(message.guild.id);
+            if (!queue) return message.channel.send("Tidak ada lagu yang sedang dimainkan");
 
-        const queueEmbed = await message.channel.send(
-            `**Current Page - ${currentPage + 1}/${embeds.length}**`,
-            embeds[currentPage]
-        );
+            let currentPage = 0;
+            const embeds = generateQueueEmbed(message, queue.songs);
 
-        try {
-            await queueEmbed.react("⬅️");
-            await queueEmbed.react("⏹");
-            await queueEmbed.react("➡️");
-        } catch (error) {
-            console.error(error);
-            message.channel.send(error.message).catch(console.error);
-        }
+            const queueEmbed = await message.channel.send(
+                `**Current Page - ${currentPage + 1}/${embeds.length}**`,
+                embeds[currentPage]
+            );
 
-        const filter = (reaction, user) => ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && message.author.id === user.id;
-        const collector = queueEmbed.createReactionCollector(filter, { time: 60000 });
-
-        collector.on("collect", async(reaction, user) => {
             try {
-                if (reaction.emoji.name === "➡️") {
-                    if (currentPage < embeds.length - 1) {
-                        currentPage++;
-                        queueEmbed.edit(`**Halaman - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
-                    }
-                } else if (reaction.emoji.name === "⬅️") {
-                    if (currentPage !== 0) {
-                        --currentPage;
-                        queueEmbed.edit(`**Halaman - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
-                    }
-                } else {
-                    collector.stop();
-                    reaction.message.reactions.removeAll().then(() => {
-                        message.channel.bulkDelete(1);
-                    });
-                }
+                await queueEmbed.react("⬅️");
+                await queueEmbed.react("⏹");
+                await queueEmbed.react("➡️");
             } catch (error) {
                 console.error(error);
-                return message.channel.send(error.message).catch(console.error);
+                message.channel.send(error.message).catch(console.error);
             }
-        });
+
+            const filter = (reaction, user) => ["⬅️", "⏹", "➡️"].includes(reaction.emoji.name) && message.author.id === user.id;
+            const collector = queueEmbed.createReactionCollector(filter, { time: 60000 });
+
+            collector.on("collect", async(reaction, user) => {
+                try {
+                    if (reaction.emoji.name === "➡️") {
+                        if (currentPage < embeds.length - 1) {
+                            currentPage++;
+                            queueEmbed.edit(`**Halaman - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
+                        }
+                    } else if (reaction.emoji.name === "⬅️") {
+                        if (currentPage !== 0) {
+                            --currentPage;
+                            queueEmbed.edit(`**Halaman - ${currentPage + 1}/${embeds.length}**`, embeds[currentPage]);
+                        }
+                    } else {
+                        collector.stop();
+                        reaction.message.reactions.removeAll().then(() => {
+                            message.channel.bulkDelete(1);
+                        });
+                    }
+                } catch (error) {
+                    console.error(error);
+                    return message.channel.send(error.message).catch(console.error);
+                }
+            });
+        }
     }
 };
 
