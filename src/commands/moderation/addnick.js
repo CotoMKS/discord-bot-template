@@ -1,6 +1,4 @@
-const { PREFIX } = require("../util/util");
-
-const { PREFIX } = require('../util/util');
+const { PREFIX } = require("../../util/util");
 
 module.exports = {
     name: "addnick",

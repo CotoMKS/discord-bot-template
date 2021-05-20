@@ -1,8 +1,8 @@
-const { play } = require("../include/play");
+const { play } = require("../../include/play");
 const ytdl = require("ytdl-core");
 const YouTubeAPI = require("simple-youtube-api");
 const https = require("https");
-const { YOUTUBE_API_KEY, DEFAULT_VOLUME } = require("../util/util");
+const { YOUTUBE_API_KEY, DEFAULT_VOLUME } = require("../../util/util");
 const youtube = new YouTubeAPI(YOUTUBE_API_KEY);
 
 module.exports = {

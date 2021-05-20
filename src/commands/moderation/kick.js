@@ -1,4 +1,4 @@
-const PREFIX = require('../util/util');
+const PREFIX = require("../../util/util");
 const Discord = require('discord.js');
 
 module.exports = {

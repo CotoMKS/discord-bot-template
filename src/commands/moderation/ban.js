@@ -1,5 +1,5 @@
 const Discord = require("discord.js");
-const { PREFIX } = require("../util/util");
+const { PREFIX } = require("../../util/util");
 
 module.exports = {
     name: 'ban',
