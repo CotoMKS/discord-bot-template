@@ -1,4 +1,4 @@
-const { PREFIX } = require('../util/util');
+const { PREFIX } = require("../../util/util");
 const prefix = PREFIX;
 
 module.exports = {

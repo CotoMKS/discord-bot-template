@@ -18,9 +18,9 @@ try {
     config = null;
 }
 
-exports.TOKEN = config ? config.TOKEN : process.env.TOKEN;
+exports.TOKEN = `${process.env.BOT_TOKEN}`;
 exports.PREFIX = config ? config.PREFIX : process.env.PREFIX;
-exports.YOUTUBE_API_KEY = config ? config.YOUTUBE_API_KEY : process.env.YOUTUBE_API_KEY;
+exports.YOUTUBE_API_KEY = `${process.env.YOUTUBE_API_KEY}`;
 exports.MAX_PLAYLIST_SIZE = config ? config.MAX_PLAYLIST_SIZE : process.env.MAX_PLAYLIST_SIZE;
 exports.PRUNING = config ? config.PRUNING : process.env.PRUNING;
 exports.STAY_TIME = config ? config.STAY_TIME : process.env.STAY_TIME;
