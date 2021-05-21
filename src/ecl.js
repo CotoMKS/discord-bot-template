@@ -18,7 +18,7 @@ const loadEvent = (bot)=>{
     const F = readdirSync(eventFolder)
     F.forEach(fn=>{
         if (!fn.endsWith('.js')) return;
-        bot.on(fn.split('.')[0], require(`./event/${fn}`).bind(null, bot))
+        bot.on(fn.split('.')[0], require(`./events/${fn}`).bind(null, bot))
     })
 }
 
