@@ -1,3 +1,3 @@
-module.exports = (e,bot) => {
+module.exports = (bot, e,) => {
     console.error(e)
 }

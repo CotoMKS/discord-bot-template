@@ -1,4 +1,4 @@
-module.exports = (message, bot) => {
+module.exports = (bot, message,) => {
     if (message.author.bot) return;
     if (!message.guild) return;
 

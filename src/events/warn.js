@@ -1,3 +1,3 @@
-module.exports = (info,bot) => {
+module.exports = (bot,info,) => {
     console.log(info)
 }
