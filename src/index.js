@@ -13,7 +13,8 @@ client.login(`${process.env.BOT_TOKEN}`);
 client.commands = new Collection();
 client.aliases = new Collection();
 const PREFIX = config.PREFIX
-client.prefix = PREFIX;
+client.PREFIX = PREFIX;
 client.queue = new Map();
+client.cooldowns = new Collection()
 
 require('./ecl')(client)

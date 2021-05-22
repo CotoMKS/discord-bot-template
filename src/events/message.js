@@ -1,47 +1,22 @@
-module.exports = (bot, message,) => {
-    if (message.author.bot) return;
-    if (!message.guild) return;
+const { Client, Message } = require ("discord.js");
 
-    const prefixRegex = new RegExp(`^(<@!?${bot.user.id}>|${escapeRegex(PREFIX)})\\s*`);
-    if (!prefixRegex.test(message.content)) return;
 
-    const [matchedPrefix] = message.content.match(prefixRegex);
 
-    const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
-    const commandName = args.shift().toLowerCase();
+module.exports = async(bot, msg)=>{
+    if (!msg.guild?.me?.hasPermission('SEND_MESSAGES') || msg.author.bot) return;
+    if (msg.channel.type === 'dm') return;
 
-    const command =
-        bot.commands.get(commandName) ||
-        bot.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+    const prefix = bot.PREFIX
+    const prefixMention = new RegExp(`^<@!?${bot.user?.id}>( |)$`);
+    if (msg.content.match(prefixMention)) return msg.channel.send(`My prefix is: ${prefix}`)
 
-    if (!command) return;
+    if (!msg.content.startsWith(prefix)) return;
 
-    if (!cooldowns.has(command.name)) {
-        cooldowns.set(command.name, new Collection());
-    }
+    const args = msg.content.slice(prefix.length).trim().split(/ +/)
+    const cname = args.shift()?.toLowerCase()
+    const cfun = bot.commands.get(`${cname}`) || bot.aliases.find((c)=>c.aliases && c.aliases.includes(`${cname}`))
 
-    const now = Date.now();
-    const timestamps = cooldowns.get(command.name);
-    const cooldownAmount = (command.cooldown || 1) * 1000;
-
-    if (timestamps.has(message.author.id)) {
-        const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
-
-        if (now < expirationTime) {
-            const timeLeft = (expirationTime - now) / 1000;
-            return message.reply(
-                `Please wait ${timeLeft.toFixed(1)} second(s) to use \`${command.name}\` again.`
-            );
-        }
-    }
-
-    timestamps.set(message.author.id, now);
-    setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
-
-    try {
-        command.execute(message, args);
-    } catch (error) {
-        console.error(error);
-        message.reply(`Error while executing the command\Reason : ${error}`).catch(console.error);
-    }
-}
+    if (!cfun) return;
+    try {await cfun.execute(msg, args)}
+    catch(e){console.log(e);msg.channel.send(`e`).catch(e=>{})}
+}   
